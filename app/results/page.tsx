@@ -7,6 +7,7 @@ import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { recommendations } from '../data/recommendations';
 import HollandResultDiagram from '@/components/HollandResultDiagram';
+import { BsArrowRepeat, BsHouseFill } from 'react-icons/bs';
 
 // Register necessary Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -28,79 +29,105 @@ export default function ResultsPage() {
   // Data for the chart
   const chartData = {
     labels: [
-      'מציאותי (R)', 
-      'חוקר (I)', 
-      'אמנותי (A)', 
-      'חברתי (S)', 
-      'יזמי (E)', 
+      'מציאותי (R)',
+      'חוקר (I)',
+      'אמנותי (A)',
+      'חברתי (S)',
+      'יזמי (E)',
       'קונבנציונלי (C)'
     ],
     datasets: [
       {
-        label: 'Scores',
-        data: Object.values(scores), // Use the scores values for the chart
+        label: 'הניקוד שלך',
+        data: Object.values(scores),
         backgroundColor: [
-          'rgba(38, 150, 255, 0.6)',  // R (Realistic)
-          'rgba(255, 99, 132, 0.6)',   // I (Investigative)
-          'rgba(54, 162, 235, 0.6)',   // A (Artistic)
-          'rgba(75, 192, 192, 0.6)',   // S (Social)
-          'rgba(153, 102, 255, 0.6)',  // E (Enterprising)
-          'rgba(255, 159, 64, 0.6)'    // C (Conventional)
-        ], // Each type gets a distinct color
-        borderColor: 'rgba(0, 0, 0, 0.1)', // Soft border color for the bars
-        borderWidth: 1,
+          'rgba(255, 99, 132, 0.7)',
+          'rgba(54, 162, 235, 0.7)',
+          'rgba(255, 206, 86, 0.7)',
+          'rgba(75, 192, 192, 0.7)',
+          'rgba(153, 102, 255, 0.7)',
+          'rgba(255, 159, 64, 0.7)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 2,
+        borderRadius: 8,
       },
     ],
   };
 
-  // Chart options
   const chartOptions = {
     responsive: true,
-    maintainAspectRatio: false, // Make the chart responsive
+    maintainAspectRatio: false,
     plugins: {
       title: {
         display: true,
-        text: 'Your Holland Code Scores',
+        text: 'הניקוד שלך לפי טיפוסי הולנד',
+        font: {
+          size: 18,
+          weight: 'bold' as 'bold', // Explicitly cast the type
+        },
+        color: '#4b5563',
       },
       tooltip: {
         callbacks: {
-          label: (tooltipItem: any) => `${tooltipItem.raw} points`, // Display score in the tooltip
+          label: (tooltipItem: any) => `${tooltipItem.raw} נקודות`,
         },
       },
       legend: {
-        position: 'top',
+        display: false,
       },
     },
     scales: {
       y: {
         beginAtZero: true,
-        max: 12, // Set maximum value to match the expected score range
+        max: 12,
+        grid: {
+          color: '#e5e7eb',
+        },
+        ticks: {
+          color: '#6b7280',
+        },
+      },
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: '#6b7280',
+        },
       },
     },
   };
 
   const getRecommendations = (code: string) => {
 
-  // Normalize the code to lowercase to handle case insensitivity
-  const normalizedCode = code.toUpperCase();
+    // Normalize the code to lowercase to handle case insensitivity
+    const normalizedCode = code.toUpperCase();
 
-  // Check if there's an exact match first
-  if (recommendations[normalizedCode]) {
-    return recommendations[normalizedCode];
-  }
+    // Check if there's an exact match first
+    if (recommendations[normalizedCode]) {
+      return recommendations[normalizedCode];
+    }
 
-  // If no exact match, check combinations of the code and look for startsWith matches
-  const possibleMatches = Object.keys(recommendations).filter(key =>
-    normalizedCode.startsWith(key)
-  );
+    // If no exact match, check combinations of the code and look for startsWith matches
+    const possibleMatches = Object.keys(recommendations).filter(key =>
+      normalizedCode.startsWith(key)
+    );
 
-  // If we have any possible matches, return the first one (the most complete match)
-  if (possibleMatches.length > 0) {
-    return recommendations[possibleMatches[0]];
-  }
+    // If we have any possible matches, return the first one (the most complete match)
+    if (possibleMatches.length > 0) {
+      return recommendations[possibleMatches[0]];
+    }
 
-  // If no matches were found, return a default message
-  return "קוד הולנד לא מוכר. נסה שנית.";
+    // If no matches were found, return a default message
+    return "קוד הולנד לא מוכר. נסה שנית.";
   };
 
   return (
@@ -110,12 +137,12 @@ export default function ResultsPage() {
 
         <p className="text-xl mb-6">קוד הולנד שלך הוא:</p>
         <p className="text-6xl font-bold text-blue-600 dark:text-blue-400 mb-8 tracking-widest">
-        <HollandResultDiagram
-  topLabel={hollandCode[0]}
-  leftLabel={hollandCode[1]}
-  rightLabel={hollandCode[2]}
-  result={hollandCode}
-/>
+          <HollandResultDiagram
+            topLabel={hollandCode[0]}
+            leftLabel={hollandCode[1]}
+            rightLabel={hollandCode[2]}
+            result={hollandCode}
+          />
         </p>
 
         {/* Bar Chart for Holland Code */}
@@ -129,11 +156,21 @@ export default function ResultsPage() {
           <p>{getRecommendations(hollandCode)}</p>
         </div>
 
-        <Link href="/">
-          <span className="text-blue-500 hover:underline dark:text-blue-300">
-            חזרה לדף הבית
-          </span>
-        </Link>
+        {/* Footer and Navigation */}
+        <div className="flex flex-col md:flex-row justify-center items-center gap-4 mt-8">
+          <Link href="/" passHref>
+            <button className="flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-full transition-all duration-300 transform hover:scale-105">
+              <BsHouseFill />
+              חזרה לדף הבית
+            </button>
+          </Link>
+          <Link href="/quiz" passHref>
+            <button className="flex items-center gap-2 px-6 py-3 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold rounded-full transition-all duration-300 transform hover:scale-105">
+              <BsArrowRepeat />
+              התחל שאלון חדש
+            </button>
+          </Link>
+        </div>
       </div>
     </main>
   );
