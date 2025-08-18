@@ -1,25 +1,34 @@
-// src/app/page.tsx (שינוי חלקי)
-"use client"
-import Link from 'next/link'; // <-- 1. ייבוא Link
+// src/app/page.tsx
+"use client";
+import Link from 'next/link';
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <div className="text-center">
+    <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-gradient-to-br from-blue-300 to-purple-400">
+      <div className="text-center p-10 bg-white rounded-3xl shadow-2xl max-w-lg mx-auto transform hover:scale-105 transition-transform duration-300">
 
-        <h1 className="text-4xl font-bold mb-4">
-          ברוכים הבאים לשאלון נטיות תעסוקתיות
+        <h1 className="text-5xl font-extrabold mb-4 text-purple-700">
+          ברוכים הבאים 🚀
         </h1>
-        <p className="mb-8 text-lg">
-          גלו אילו סביבות עבודה וקריירות מתאימות לכם ביותר לפי מודל הולנד.
-          השאלון לוקח כ-10 דקות.
+        <h2 className="text-2xl font-semibold mb-6 text-blue-600">
+          שאלון נטיות תעסוקתיות ומפגש עם טריוויה
+        </h2>
+        <p className="mb-8 text-lg text-gray-700 leading-relaxed">
+          גלו אילו סביבות עבודה וקריירות מתאימות לכם ביותר לפי מודל הולנד, או פשוט תיהנו ממשחק טריוויה מרתק!
         </p>
-        {/* 2. שימוש ב-Link במקום button */}
-        <Link href="/quiz">
-          <span className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer">
-            התחל/י שאלון
-          </span>
-        </Link>
+
+        <div className="flex flex-col space-y-4">
+          <Link href="/quiz" passHref>
+            <button className="w-full py-4 px-6 bg-blue-500 text-white font-bold rounded-full shadow-lg hover:bg-blue-600 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+              התחל/י שאלון נטיות
+            </button>
+          </Link>
+          <Link href="/games" passHref>
+            <button className="w-full py-4 px-6 bg-purple-500 text-white font-bold rounded-full shadow-lg hover:bg-purple-600 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-75">
+              שחק/י במשחק טריוויה
+            </button>
+          </Link>
+        </div>
       </div>
     </main>
   );

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { recommendations } from '../data/recommendations';
+import HollandResultDiagram from '@/components/HollandResultDiagram';
 
 // Register necessary Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -80,7 +81,6 @@ export default function ResultsPage() {
 
   const getRecommendations = (code: string) => {
 
-  
   // Normalize the code to lowercase to handle case insensitivity
   const normalizedCode = code.toUpperCase();
 
@@ -110,7 +110,12 @@ export default function ResultsPage() {
 
         <p className="text-xl mb-6">קוד הולנד שלך הוא:</p>
         <p className="text-6xl font-bold text-blue-600 dark:text-blue-400 mb-8 tracking-widest">
-          {hollandCode}
+        <HollandResultDiagram
+  topLabel={hollandCode[0]}
+  leftLabel={hollandCode[1]}
+  rightLabel={hollandCode[2]}
+  result={hollandCode}
+/>
         </p>
 
         {/* Bar Chart for Holland Code */}
