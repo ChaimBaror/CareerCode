@@ -5,7 +5,7 @@ import Link from 'next/link';
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-gradient-to-br from-blue-300 to-purple-400">
-      <div className="text-center p-10 bg-white rounded-3xl shadow-2xl max-w-lg mx-auto transform hover:scale-105 transition-transform duration-300">
+      <div className="text-center p-10 bg-white rounded-3xl shadow-2xl max-xxl mx-auto transform hover:scale-105 transition-transform duration-300">
 
         <h1 className="text-5xl font-extrabold mb-4 text-purple-700">
           ברוכים הבאים 🚀
