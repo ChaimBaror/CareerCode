@@ -28,6 +28,11 @@ export default function Home() {
               שחק/י במשחק טריוויה
             </button>
           </Link>
+          <Link href="/games_ai" passHref>
+            <button className="w-full py-4 px-6 bg-yellow-500 text-white font-bold rounded-full shadow-lg hover:bg-yellow-600 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-75">
+              שחק/י במשחק טריוויה AI
+            </button>
+          </Link>
         </div>
       </div>
     </main>

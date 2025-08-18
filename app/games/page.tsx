@@ -1,16 +1,40 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { questions } from "../data/gmae_questions";
+import { FaVolumeUp } from "react-icons/fa";
 
 export default function Home() {
     const [step, setStep] = useState(0);
     const [message, setMessage] = useState("");
     const [score, setScore] = useState(0);
     const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(null);
+    const [isSpeaking, setIsSpeaking] = useState(false);
 
     const currentQuestion = questions[step];
 
+    // Read the question aloud when the component mounts or the question changes
+    useEffect(() => {
+        speakQuestion(currentQuestion.q);
+    }, [currentQuestion.q]);
+
+    const speakQuestion = (text: string) => {
+        if ("speechSynthesis" in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'he-IL'; // Set language to Hebrew
+            utterance.onstart = () => setIsSpeaking(true);
+            utterance.onend = () => setIsSpeaking(false);
+            window.speechSynthesis.speak(utterance);
+        } else {
+            console.warn("Speech Synthesis not supported in this browser.");
+        }
+    };
+
     const handleAnswer = (isCorrect: boolean, index: number) => {
+        // Stop any ongoing speech before processing the answer
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+        }
+
         setSelectedAnswerIndex(index);
 
         if (isCorrect) {
@@ -45,7 +69,6 @@ export default function Home() {
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-gradient-to-br from-purple-800 to-pink-600 relative overflow-hidden">
-
             {/* רקעים מעגליים */}
             <div className="absolute top-[-100px] left-[-100px] w-[300px] h-[300px] bg-purple-500 rounded-full opacity-20 animate-pulse"></div>
             <div className="absolute bottom-[-150px] right-[-150px] w-[400px] h-[400px] bg-pink-500 rounded-full opacity-20 animate-pulse"></div>
@@ -62,9 +85,18 @@ export default function Home() {
 
                 {step < questions.length ? (
                     <>
-                        <h1 className="text-3xl font-extrabold mb-8 text-purple-900">
-                            {currentQuestion.q}
-                        </h1>
+                        <div className="flex items-center justify-center gap-4 mb-8">
+                            <h1 className="text-3xl font-extrabold text-purple-900">
+                                {currentQuestion.q}
+                            </h1>
+                            <button
+                                onClick={() => speakQuestion(currentQuestion.q)}
+                                disabled={isSpeaking}
+                                className="text-purple-600 text-3xl transition-transform transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <FaVolumeUp />
+                            </button>
+                        </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {currentQuestion.answers.map((ans, i) => (
