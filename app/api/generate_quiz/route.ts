@@ -11,6 +11,11 @@ if (!geminiApiKey) {
 const genAI = new GoogleGenerativeAI(geminiApiKey);
 
 // Types
+interface Answer {
+  text: string;
+  isCorrect: boolean;
+}
+
 interface QuizRequest {
   topic: string;
   difficulty: string;
@@ -43,8 +48,12 @@ function shuffleArray<T>(array: T[]): void {
   }
 }
 
-function validateRequest(body: any): { isValid: boolean; error?: string } {
-  const { topic, difficulty, lang } = body;
+function validateRequest(body: unknown): { isValid: boolean; error?: string } {
+  if (typeof body !== 'object' || body === null) {
+    return { isValid: false, error: 'Invalid request body' };
+  }
+  
+  const { topic, difficulty, lang } = body as Record<string, unknown>;
 
   if (!topic || typeof topic !== 'string' || topic.trim().length === 0) {
     return { isValid: false, error: 'Topic must be a non-empty string' };
@@ -54,11 +63,11 @@ function validateRequest(body: any): { isValid: boolean; error?: string } {
     return { isValid: false, error: `Topic must be less than ${MAX_TOPIC_LENGTH} characters` };
   }
 
-  if (!difficulty || typeof difficulty !== 'string' || !SUPPORTED_DIFFICULTIES.includes(difficulty as any)) {
+  if (!difficulty || typeof difficulty !== 'string' || !SUPPORTED_DIFFICULTIES.includes(difficulty as typeof SUPPORTED_DIFFICULTIES[number])) {
     return { isValid: false, error: `Difficulty must be one of: ${SUPPORTED_DIFFICULTIES.join(', ')}` };
   }
 
-  if (!lang || typeof lang !== 'string' || !SUPPORTED_LANGUAGES.includes(lang as any)) {
+  if (!lang || typeof lang !== 'string' || !SUPPORTED_LANGUAGES.includes(lang as typeof SUPPORTED_LANGUAGES[number])) {
     return { isValid: false, error: `Language must be one of: ${SUPPORTED_LANGUAGES.join(', ')}` };
   }
 
@@ -140,17 +149,24 @@ function cleanAIResponse(text: string): string {
   return cleaned;
 }
 
-function validateQuizStructure(questions: any[]): { isValid: boolean; error?: string } {
+interface QuizQuestionWithAnswers {
+  q: string;
+  answers: Answer[];
+  points?: number;
+}
+
+function validateQuizStructure(questions: unknown): { isValid: boolean; error?: string } {
   if (!Array.isArray(questions)) {
     return { isValid: false, error: 'Response must be an array' };
   }
 
-  if (questions.length !== QUESTION_COUNT) {
-    return { isValid: false, error: `Expected ${QUESTION_COUNT} questions, got ${questions.length}` };
+  const typedQuestions = questions as QuizQuestionWithAnswers[];
+  if (typedQuestions.length !== QUESTION_COUNT) {
+    return { isValid: false, error: `Expected ${QUESTION_COUNT} questions, got ${typedQuestions.length}` };
   }
 
-  for (let i = 0; i < questions.length; i++) {
-    const q = questions[i];
+  for (let i = 0; i < typedQuestions.length; i++) {
+    const q = typedQuestions[i];
     
     if (!q.q || typeof q.q !== 'string') {
       return { isValid: false, error: `Question ${i + 1} missing or invalid question text` };
@@ -160,7 +176,7 @@ function validateQuizStructure(questions: any[]): { isValid: boolean; error?: st
       return { isValid: false, error: `Question ${i + 1} must have exactly 4 answers` };
     }
 
-    const correctAnswers = q.answers.filter((a: any) => a.isCorrect === true);
+    const correctAnswers = q.answers.filter((a) => a.isCorrect === true);
     if (correctAnswers.length !== 1) {
       return { isValid: false, error: `Question ${i + 1} must have exactly one correct answer` };
     }
