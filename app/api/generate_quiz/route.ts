@@ -48,7 +48,7 @@ export async function POST(request: Request) {
       const questions = JSON.parse(cleanedText);
       return NextResponse.json({ questions });
     } catch (parseError) {
-      console.error('Failed to parse JSON from AI response:', cleanedText);
+      console.error('Failed to parse JSON from AI response:', parseError);
       return NextResponse.json({ error: 'Failed to parse AI response' }, { status: 500 });
     }
 

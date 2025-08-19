@@ -1,7 +1,7 @@
 // src/app/api/describe-code/route.ts
 import { NextResponse } from 'next/server';
 // 1. ייבוא הספריה של גוגל
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // 2. בדיקה וקריאה של מפתח ה-API של גוגל
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
@@ -35,17 +35,17 @@ export async function POST(request: Request) {
     // 5. קריאה ל-API של Gemini
     const model = genAI.getGenerativeModel({ model: "gemini-pro" }); // או מודל אחר זמין
 
-    // הגדרות בטיחות (אופציונלי אך מומלץ להתאים לפי הצורך)
-    const generationConfig = {
-        temperature: 0.7,
-        // maxOutputTokens: 150, // אפשר להגדיר גם כאן
-    };
-    const safetySettings = [
-        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-    ];
+    // // הגדרות בטיחות (אופציונלי אך מומלץ להתאים לפי הצורך)
+    // const generationConfig = {
+    //     temperature: 0.7,
+    //     // maxOutputTokens: 150, // אפשר להגדיר גם כאן
+    // };
+    // const safetySettings = [
+    //     { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+    //     { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+    //     { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+    //     { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+    // ];
 
     const result = await model.generateContent(prompt, /* generationConfig, safetySettings */); // אפשר להוסיף הגדרות
     const response = result.response;

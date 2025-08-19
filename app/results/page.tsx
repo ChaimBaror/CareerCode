@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, TooltipItem } from 'chart.js';
 import { recommendations } from '../data/recommendations';
 import HollandResultDiagram from '@/components/HollandResultDiagram';
 import { BsArrowRepeat, BsHouseFill } from 'react-icons/bs';
@@ -12,7 +12,7 @@ import { BsArrowRepeat, BsHouseFill } from 'react-icons/bs';
 // Register necessary Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export default function ResultsPage() {
+function ResultsContent() {
   const searchParams = useSearchParams();
   const hollandCode = searchParams.get('hollandCode');
   const scores = JSON.parse(searchParams.get('scores') || '{}');
@@ -71,13 +71,13 @@ export default function ResultsPage() {
         text: 'הניקוד שלך לפי טיפוסי הולנד',
         font: {
           size: 18,
-          weight: 'bold' as 'bold', // Explicitly cast the type
+          weight: 'bold' as const,
         },
         color: '#4b5563',
       },
       tooltip: {
         callbacks: {
-          label: (tooltipItem: any) => `${tooltipItem.raw} נקודות`,
+          label: (tooltipItem: TooltipItem<'bar'>) => `${tooltipItem.parsed.y} נקודות`,
         },
       },
       legend: {
@@ -131,12 +131,11 @@ export default function ResultsPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-10 md:p-24 bg-white text-black dark:bg-gray-900 dark:text-white">
-      <div className="w-full max-w-lg text-center bg-gray-100 dark:bg-gray-800 p-8 rounded-lg shadow-md">
-        <h1 className="text-3xl font-bold mb-4">התוצאות שלך</h1>
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="bg-white shadow-lg rounded-lg p-6">
+        <h1 className="text-2xl font-bold mb-6 text-center">תוצאות טיפוסי הולנד</h1>
 
-        <p className="text-xl mb-6">קוד הולנד שלך הוא:</p>
-        <p className="text-6xl font-bold text-blue-600 dark:text-blue-400 mb-8 tracking-widest">
+        <p className="text-center mb-6">
           <HollandResultDiagram
             topLabel={hollandCode[0]}
             leftLabel={hollandCode[1]}
@@ -159,19 +158,25 @@ export default function ResultsPage() {
         {/* Footer and Navigation */}
         <div className="flex flex-col md:flex-row justify-center items-center gap-4 mt-8">
           <Link href="/" passHref>
-            <button className="flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-full transition-all duration-300 transform hover:scale-105">
-              <BsHouseFill />
-              חזרה לדף הבית
+            <button className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+              <BsHouseFill /> חזרה לדף הבית
             </button>
           </Link>
           <Link href="/quiz" passHref>
-            <button className="flex items-center gap-2 px-6 py-3 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold rounded-full transition-all duration-300 transform hover:scale-105">
-              <BsArrowRepeat />
-              התחל שאלון חדש
+            <button className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">
+              <BsArrowRepeat /> עשה את המבחן שוב
             </button>
           </Link>
         </div>
       </div>
-    </main>
+    </div>
+  );
+}
+
+export default function ResultsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResultsContent />
+    </Suspense>
   );
 }
