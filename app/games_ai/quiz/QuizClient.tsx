@@ -170,6 +170,7 @@ export default function QuizClient() {
 
                 {/* Question */}
                 <h1
+                    dir={lang == "he" ? 'rtl' : 'ltr'}
                     key={currentQuestionIndex}
                     className="text-2xl md:text-3xl font-extrabold mb-8 text-yellow-900 dark:text-yellow-200 animate-slide-fade"
                 >
