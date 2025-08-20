@@ -11,7 +11,7 @@ export default function Home() {
           ברוכים הבאים 🚀
         </h1>
         <h2 className="text-2xl font-semibold mb-6 text-blue-600">
-          שאלון נטיות תעסוקתיות ומפגש עם טריוויה
+          שאלון תעסוקתיות ומפגש עם טריוויה
         </h2>
         <p className="mb-8 text-lg text-gray-700 leading-relaxed">
           גלו אילו סביבות עבודה וקריירות מתאימות לכם ביותר לפי מודל הולנד, או פשוט תיהנו ממשחק טריוויה מרתק!
