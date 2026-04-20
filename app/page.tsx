@@ -33,6 +33,11 @@ export default function Home() {
               שחק/י במשחק טריוויה AI
             </button>
           </Link>
+          <Link href="/roboteach-english" passHref>
+            <button className="w-full py-4 px-6 bg-green-500 text-white font-bold rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75">
+              🤖 למד/י אנגלית עם RoboTeach
+            </button>
+          </Link>
         </div>
       </div>
     </main>
