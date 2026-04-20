@@ -3,15 +3,13 @@ import { NextResponse } from 'next/server';
 // 1. ייבוא הספריה של גוגל
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// 2. בדיקה וקריאה של מפתח ה-API של גוגל
-const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
-
-if (!GOOGLE_API_KEY) {
-  throw new Error("Missing Google API Key");
+// Lazy init so a missing env var surfaces as a 500 at request time
+// rather than crashing the build during page-data collection.
+function getGenAI(): GoogleGenerativeAI {
+  const key = process.env.GOOGLE_API_KEY;
+  if (!key) throw new Error('Missing Google API Key');
+  return new GoogleGenerativeAI(key);
 }
-
-// 3. אתחול ה-SDK של גוגל
-const genAI = new GoogleGenerativeAI(GOOGLE_API_KEY);
 
 export async function POST(request: Request) {
   try {
@@ -33,7 +31,7 @@ export async function POST(request: Request) {
       `;
 
     // 5. קריאה ל-API של Gemini
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" }); // או מודל אחר זמין
+    const model = getGenAI().getGenerativeModel({ model: "gemini-pro" }); // או מודל אחר זמין
 
     // // הגדרות בטיחות (אופציונלי אך מומלץ להתאים לפי הצורך)
     // const generationConfig = {

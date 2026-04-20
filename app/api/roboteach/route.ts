@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const geminiApiKey = process.env.GOOGLE_GEMINI_API_KEY;
-if (!geminiApiKey) {
-  throw new Error('GOOGLE_GEMINI_API_KEY environment variable is not set.');
+// Lazy init so a missing env var surfaces as a 500 at request time
+// rather than crashing the build during page-data collection.
+function getGenAI(): GoogleGenerativeAI {
+  const key = process.env.GOOGLE_GEMINI_API_KEY;
+  if (!key) throw new Error('GOOGLE_GEMINI_API_KEY environment variable is not set.');
+  return new GoogleGenerativeAI(key);
 }
-
-const genAI = new GoogleGenerativeAI(geminiApiKey);
 
 const SYSTEM = `You are RoboTeach, a fun, encouraging robot English teacher for Hebrew speakers.
 
@@ -50,7 +51,7 @@ export async function POST(request: Request) {
       parts: [{ text: String(m.content ?? '') }],
     }));
 
-    const model = genAI.getGenerativeModel({
+    const model = getGenAI().getGenerativeModel({
       model: 'gemini-2.0-flash',
       systemInstruction: { role: 'system', parts: [{ text: SYSTEM }] },
       generationConfig: {

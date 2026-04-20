@@ -2,13 +2,13 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Environment validation
-const geminiApiKey = process.env.GOOGLE_GEMINI_API_KEY;
-if (!geminiApiKey) {
-  throw new Error('GOOGLE_GEMINI_API_KEY environment variable is not set.');
+// Lazy init so a missing env var surfaces as a 500 at request time
+// rather than crashing the build during page-data collection.
+function getGenAI(): GoogleGenerativeAI {
+  const key = process.env.GOOGLE_GEMINI_API_KEY;
+  if (!key) throw new Error('GOOGLE_GEMINI_API_KEY environment variable is not set.');
+  return new GoogleGenerativeAI(key);
 }
-
-const genAI = new GoogleGenerativeAI(geminiApiKey);
 
 // Types
 interface Answer {
@@ -220,7 +220,7 @@ export async function POST(request: Request) {
     const { topic, difficulty, lang } = body;
 
     // Generate quiz using AI
-    const model = genAI.getGenerativeModel({ 
+    const model = getGenAI().getGenerativeModel({
       model: 'gemini-2.0-flash',
       generationConfig: {
         temperature: 0.7,
