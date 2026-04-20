@@ -93,7 +93,7 @@ export function useAudio(isHebrew: boolean) {
         };
     }, []);
 
-    const speakText = (text: string, force: boolean = false): void => {
+    const speakText = useCallback((text: string, force: boolean = false): void => {
         if (!ttsEnabled && !force) return;
 
         if (!('speechSynthesis' in window)) {
@@ -130,7 +130,7 @@ export function useAudio(isHebrew: boolean) {
             console.warn('Could not speak text:', error);
             setIsSpeaking(false);
         }
-    };
+    }, [ttsEnabled, isHebrew]);
 
     const stopSpeaking = (): void => {
         speechSynthesis.cancel();
@@ -139,7 +139,7 @@ export function useAudio(isHebrew: boolean) {
 
     const speakQuestion = useCallback((questionText: string): void => {
         speakText(questionText, true);
-    }, [ttsEnabled]);
+    }, [speakText]);
 
     const toggleSound = (): void => {
         setSoundEnabled(!soundEnabled);
