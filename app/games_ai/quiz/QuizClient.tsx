@@ -24,6 +24,9 @@ export default function QuizClient() {
     const audioHook = useAudio(isHebrew);
     const imageHook = useImageFetcher();
 
+    const { ttsEnabled, soundEnabled, speakQuestion, playNewQuestionSound, playAnswerSound, speakText } = audioHook;
+    const { imageEnabled, fetchImageForAnswer } = imageHook;
+
     const {
         questions,
         currentQuestionIndex,
@@ -37,34 +40,34 @@ export default function QuizClient() {
         topic,
         difficulty,
         lang,
-        audioHook.playAnswerSound,
-        audioHook.speakText
+        playAnswerSound,
+        speakText
     );
 
     // Auto-fetch image for correct answer and auto-speak
     useEffect(() => {
         if (questions && questions[currentQuestionIndex]) {
             const correctAnswer = questions[currentQuestionIndex].answers.find(a => a.isCorrect);
-            if (correctAnswer && imageHook.imageEnabled) {
-                imageHook.fetchImageForAnswer(correctAnswer.text);
+            if (correctAnswer && imageEnabled) {
+                fetchImageForAnswer(correctAnswer.text);
             }
 
-            if (audioHook.ttsEnabled && !loading && !error) {
+            if (ttsEnabled && !loading && !error) {
                 const timer = setTimeout(() => {
-                    audioHook.speakQuestion(questions[currentQuestionIndex].q);
+                    speakQuestion(questions[currentQuestionIndex].q);
                 }, 800);
                 return () => clearTimeout(timer);
             }
         }
-    }, [currentQuestionIndex, questions, imageHook.imageEnabled, audioHook.ttsEnabled, loading, error]);
+    }, [currentQuestionIndex, questions, imageEnabled, ttsEnabled, loading, error, fetchImageForAnswer, speakQuestion]);
 
     // Play sound when new question appears
     useEffect(() => {
-        if (questions && questions.length > 0 && audioHook.soundEnabled) {
-            const timer = setTimeout(() => audioHook.playNewQuestionSound(), 300);
+        if (questions && questions.length > 0 && soundEnabled) {
+            const timer = setTimeout(() => playNewQuestionSound(), 300);
             return () => clearTimeout(timer);
         }
-    }, [currentQuestionIndex, questions, audioHook.soundEnabled]);
+    }, [currentQuestionIndex, questions, soundEnabled, playNewQuestionSound]);
 
     if (loading) return <LoadingScreen isHebrew={isHebrew} topic={topic} />;
     if (error) return <ErrorScreen error={error} isHebrew={isHebrew} />;

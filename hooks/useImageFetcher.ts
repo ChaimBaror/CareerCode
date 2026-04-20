@@ -1,5 +1,5 @@
 // hooks/useImageFetcher.ts
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ImageData } from '@/types/types';
 
 export function useImageFetcher() {
@@ -7,7 +7,7 @@ export function useImageFetcher() {
     const [imageLoading, setImageLoading] = useState(false);
     const [imageEnabled, setImageEnabled] = useState(false);
 
-    const fetchImageForAnswer = async (answerText: string): Promise<void> => {
+    const fetchImageForAnswer = useCallback(async (answerText: string): Promise<void> => {
         if (!imageEnabled) return;
 
         setImageLoading(true);
@@ -25,7 +25,7 @@ export function useImageFetcher() {
         } finally {
             setImageLoading(false);
         }
-    };
+    }, [imageEnabled]);
 
     const toggleImages = (): void => {
         setImageEnabled(!imageEnabled);

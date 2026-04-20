@@ -180,15 +180,15 @@ export function useAudio(isHebrew: boolean) {
         }
     };
 
-    const playNewQuestionSound = (): void => {
+    const playNewQuestionSound = useCallback((): void => {
         if (!soundEnabled) return;
-        
+
         try {
             playQuestionSound();
         } catch (error) {
             console.warn('Could not play sound:', error);
         }
-    };
+    }, [soundEnabled]);
 
     return {
         soundEnabled,
